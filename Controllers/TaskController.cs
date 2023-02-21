@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-
+using TaskManagement.Interfaces;
+using Task = TaskManagement.Models.Task;
 
 namespace TaskManagement.Controllers
 {
@@ -8,17 +9,22 @@ namespace TaskManagement.Controllers
     [Route("[controller]")]
     public class TaskController : ControllerBase
     {
+        private TaskInterface tasks;
+        public TaskController(TaskInterface t)
+        {
+            this.tasks = t;
+        }
 
         [HttpGet]
-        public IEnumerable<Models.Task> Get()
+        public IEnumerable<Task> Get()
         {
-            return Services.TaskService.GetAll();
+            return tasks.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Models.Task> Get(int id)
+        public ActionResult<Task> Get(int id)
         {
-            var task = Services.TaskService.Get(id);
+            var task = tasks.Get(id);
             if (task == null)
                 return NotFound();
             return task;
@@ -27,14 +33,14 @@ namespace TaskManagement.Controllers
         [HttpPost]
         public ActionResult Post(Models.Task task)
         {
-            Services.TaskService.Add(task);
+            tasks.Add(task);
             return CreatedAtAction(nameof(Post), new { id = task.Id }, task);
         }
 
         [HttpPut("{id}")]
         public ActionResult Put(int id, Models.Task task)
         {
-            int result = Services.TaskService.Update(id, task);
+            int result = tasks.Update(id, task);
             switch (result)
             {
                 case -1: return BadRequest();
@@ -46,7 +52,7 @@ namespace TaskManagement.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            if (!Services.TaskService.Delete(id))
+            if (!tasks.Delete(id))
                 return NotFound();
             return NoContent();
         }
