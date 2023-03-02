@@ -1,5 +1,6 @@
 using Task = TaskManagement.Models.Task;
 using TaskManagement.Interfaces;
+using System.Text.Json;
 
 namespace TaskManagement.Services
 {
@@ -7,10 +8,27 @@ namespace TaskManagement.Services
     public class TaskService : TaskInterface
     {
 
-        private List<Task> tasks = new List<Task>(){
-        new Task () {Id=1,Name="home work", IsDone=true },
-        new Task () {Id=2,Name="Dishwashing", IsDone=false}
-    };
+        private IWebHostEnvironment? webHost;
+        private string filePath;
+        private List<Task> tasks { get; } = new List<Task>();
+
+        public TaskService(IWebHostEnvironment webHost)
+        {
+            this.webHost = webHost;
+            this.filePath = Path.Combine(webHost.ContentRootPath, "Data", "task.json");
+            using (var jsonFile = File.OpenText(filePath))
+            {
+                tasks = JsonSerializer.Deserialize<List<Task>>(jsonFile.ReadToEnd(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+        }
+        private void saveToFile()
+        {
+            File.WriteAllText(filePath, JsonSerializer.Serialize(tasks));
+        }
         public IEnumerable<Task> GetAll() => tasks;
 
         public Task? Get(int id)
@@ -22,6 +40,7 @@ namespace TaskManagement.Services
         {
             task.Id = tasks.Max(t => t.Id) + 1;
             tasks.Add(task);
+            saveToFile();
         }
 
         public int Update(int id, Task newTask)
@@ -33,6 +52,7 @@ namespace TaskManagement.Services
                 return 0;
             task.Name = newTask.Name;
             task.IsDone = newTask.IsDone;
+            saveToFile();
             return 1;
         }
 
@@ -42,7 +62,9 @@ namespace TaskManagement.Services
             if (task == null)
                 return false;
             tasks.Remove(task);
+            saveToFile();
             return true;
         }
+        public int Count => tasks.Count();
     }
 }
