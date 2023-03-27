@@ -39,7 +39,7 @@ namespace TaskManagement.Controllers
         [Authorize(Policy = "User")]
         public ActionResult<User> Get(int id)
         {
-            string jwtEncoded = Request.Headers.Authorization;
+            string? jwtEncoded = Request.Headers.Authorization;
             var user = users.Get(id, jwtEncoded);
             if (user == null)
                 return NotFound();

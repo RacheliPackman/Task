@@ -37,7 +37,7 @@ namespace TaskManagement.Services
         }
         public ActionResult<String>? Login(User user)
         {
-            User findUser = users.FirstOrDefault(u => u.Username == user.Username && u.Password == user.Password);
+            User? findUser = users.FirstOrDefault(u => u.Username == user.Username && u.Password == user.Password);
             if (findUser == null)
             {
                 return null;
@@ -56,7 +56,7 @@ namespace TaskManagement.Services
         }
         public IEnumerable<User> GetAll() => users;
 
-        public User? Get(int id, string token)
+        public User? Get(int id, string? token)
         {
             string user = decodedToken(token);
             if (user == id + "")
@@ -95,9 +95,10 @@ namespace TaskManagement.Services
         }
         public int Count => users.Count();
 
-        private string decodedToken(string token)
+        private string decodedToken(string? token)
         {
-            token = token.Replace("Bearer ", "");
+            if (token != null)
+                token = token.Replace("Bearer ", "");
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = handler.ReadJwtToken(token);
             string id = jwtSecurityToken.Claims.First(claim => claim.Type == "id").Value;
