@@ -2,7 +2,15 @@ const uri = "/Task";
 let tasks = [];
 
 function getItems() {
-  fetch(uri)
+  fetch(uri, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    },
+    redirect: "follow",
+  })
     .then((response) => response.json())
     .then((data) => _displayItems(data))
     .catch((error) => console.error("Unable to get items.", error));
@@ -21,6 +29,7 @@ function addItem() {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: sessionStorage.getItem("token"),
     },
     body: JSON.stringify(item),
   })
@@ -35,6 +44,11 @@ function addItem() {
 function deleteItem(id) {
   fetch(`${uri}/${id}`, {
     method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: sessionStorage.getItem("token"),
+    },
   })
     .then(() => getItems())
     .catch((error) => console.error("Unable to delete item.", error));
@@ -62,6 +76,7 @@ function updateItem() {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: sessionStorage.getItem("token"),
     },
     body: JSON.stringify(item),
   })

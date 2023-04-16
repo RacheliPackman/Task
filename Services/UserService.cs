@@ -26,7 +26,7 @@ namespace TaskManagement.Services
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                });
+                })!;
             }
         }
 
@@ -58,8 +58,8 @@ namespace TaskManagement.Services
 
         public User? Get(int id, string? token)
         {
-            string user = decodedToken(token);
-            if (user == id + "")
+            string userId = decodedToken(token);
+            if (userId == id + "")
                 return users.FirstOrDefault(t => t.Id == id);
             else return null;
         }

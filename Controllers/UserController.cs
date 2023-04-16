@@ -36,7 +36,7 @@ namespace TaskManagement.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "User")]
+        [Authorize]
         public ActionResult<User> Get(int id)
         {
             string? jwtEncoded = Request.Headers.Authorization;
@@ -47,6 +47,7 @@ namespace TaskManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public ActionResult Post(User user)
         {
             users.Add(user);
@@ -54,6 +55,7 @@ namespace TaskManagement.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Put(int id, User user)
         {
             int result = users.Update(id, user);
@@ -66,6 +68,7 @@ namespace TaskManagement.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Admin")]
         public ActionResult Delete(int id)
         {
             if (!users.Delete(id))

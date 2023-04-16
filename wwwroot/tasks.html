@@ -3,12 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Task CRUD</title>
+    <title>TO DO List</title>
     <link rel="stylesheet" href="css/tasks.css" />
 </head>
 
 <body>
-    <h1>Task CRUD</h1>
+    <div class="page">
+    <h1>TO DO List</h1>
     <h3>Add</h3>
     <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
         <input type="text" id="add-name" placeholder="New task">
@@ -28,20 +29,21 @@
 
     <p id="counter"></p>
 
-    <table>
-        <tr>
-            <th>Is Done?</th>
-            <th>Name</th>
-            <th></th>
-            <th></th>
+    <table class="table">
+        <tr  >
+            <th class="title">Is Done?</th>
+            <th class="title">Name</th>
+            <th class="title"></th>
+            <th class="title"></th>
         </tr>
         <tbody id="tasks"></tbody>
     </table>
-
-    <script src="js/tasks.js" asp-append-version="true"></script>
+    <script src="js/tasks.js?v=peIBqpCcjHTZMNxHJQvKTi9jUK8WF4c7cbl-LwYoE"></script>
     <script type="text/javascript">
         getItems();
     </script>
+    </div>
 </body>
 
 </html>
+

@@ -1,5 +1,4 @@
 const uri = "/User/Login";
-let connected = false;
 
 function login() {
   const userNameTextbox = document.getElementById("userName").value;
@@ -19,16 +18,15 @@ function login() {
 
   fetch(uri, requestOptions)
     .then((response) => {
-      if (response.status === 200) {
-        connected = true;
-        response.text();
-      }
+      if (response.status === 200) return response.text();
+      else throw new Error("unauthorize");
     })
     .then((result) => {
-      if (connected) {
-        sessionStorage.setItem("token", result);
-        window.location.href = "tasks.html";
-      } else alert("שם משתמש או סיסמה שגויים");
+      sessionStorage.setItem("token", "Bearer " + result);
+      window.location.href = "tasks.html";
     })
-    .catch((error) => console.log("error", error));
+    .catch((error) => {
+      console.log("error", error);
+      alert("error");
+    });
 }

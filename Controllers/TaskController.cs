@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Interfaces;
 using Task = TaskManagement.Models.Task;
@@ -7,6 +8,7 @@ namespace TaskManagement.Controllers
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class TaskController : ControllerBase
     {
         private TaskInterface tasks;
@@ -16,12 +18,15 @@ namespace TaskManagement.Controllers
         }
 
         [HttpGet]
+
         public IEnumerable<Task> Get()
         {
-            return tasks.GetAll();
+            string? jwtEncoded = Request.Headers.Authorization;
+            return tasks.GetAll(jwtEncoded);
         }
 
         [HttpGet("{id}")]
+
         public ActionResult<Task> Get(int id)
         {
             var task = tasks.Get(id);
@@ -31,16 +36,19 @@ namespace TaskManagement.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(Models.Task task)
+
+        public ActionResult Post(Task task)
         {
-            tasks.Add(task);
+            string? jwtEncoded = Request.Headers.Authorization;
+            tasks.Add(task, jwtEncoded);
             return CreatedAtAction(nameof(Post), new { id = task.Id }, task);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, Models.Task task)
+        public ActionResult Put(int id, Task task)
         {
-            int result = tasks.Update(id, task);
+            string? jwtEncoded = Request.Headers.Authorization;
+            int result = tasks.Update(id, task, jwtEncoded);
             switch (result)
             {
                 case -1: return BadRequest();
@@ -52,9 +60,11 @@ namespace TaskManagement.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            if (!tasks.Delete(id))
+            string? jwtEncoded = Request.Headers.Authorization;
+            if (!tasks.Delete(id, jwtEncoded))
                 return NotFound();
             return NoContent();
         }
+
     }
 }
